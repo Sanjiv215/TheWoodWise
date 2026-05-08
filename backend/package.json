@@ -5,7 +5,8 @@
   "type": "commonjs",
   "scripts": {
     "start": "node server.js",
-    "server": "nodemon server.js"
+    "server": "nodemon server.js",
+    "setupDB": "node scripts/setupDB.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

@@ -32,7 +32,7 @@ function Navbar({ cartCount, wishCount, user, onLogout }) {
         <NavLink to="/cart" onClick={() => setMenuOpen(false)}><Icon name="cart" /> Cart <span className="nav-badge">{cartCount}</span></NavLink>
         {user ? (
           <>
-            <span className="user-pill">Hi, {user.name}</span>
+            <Link to="/profile" className="user-pill" onClick={() => setMenuOpen(false)}>Hi, {user.name}</Link>
             <button className="logout-btn" onClick={onLogout}>Logout</button>
           </>
         ) : (
