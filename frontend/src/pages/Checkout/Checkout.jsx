@@ -51,7 +51,8 @@ function Checkout({ cart, onPlaceOrder }) {
               key={item.name}
               onClick={() => setPayment(item.name)}
             >
-              <span>{item.icon}</span>
+              <span className="payment-radio">{payment === item.name ? "●" : ""}</span>
+              <span className="payment-icon">{item.icon}</span>
               <strong>{item.name}</strong>
             </button>
           ))}

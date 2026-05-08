@@ -5,13 +5,16 @@ function HeroSection() {
   return (
     <section className="hero">
       <div className="hero-text">
+        <p className="blue-text">Modern Furniture Store</p>
         <h1>The WoodWise</h1>
         <p>
-          Discover the best wooden furniture for your home.
+          Bright, minimal and comfortable furniture for homes that feel calm and beautifully organized.
         </p>
         <Link to="/products" className="main-btn">Shop Collection</Link>
       </div>
-
+      <div className="hero-showcase">
+        <img src="../images/home.png" />
+      </div>
     </section>
   );
 }

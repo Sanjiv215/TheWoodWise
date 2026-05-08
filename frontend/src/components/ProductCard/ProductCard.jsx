@@ -12,8 +12,8 @@ function ProductCard({ product, onAddCart, onAddWishlist }) {
       <p className="rating">★ {product.rating}</p>
       <h2>₹{product.price.toLocaleString("en-IN")}</h2>
       <div className="product-card-buttons">
-        <button onClick={() => onAddCart(product)}>Add Cart</button>
-        <button className="outline-btn" onClick={() => onAddWishlist(product)}>♡</button>
+        <button onClick={() => onAddCart(product)}>Quick Add</button>
+        <button className="outline-btn heart-btn" onClick={() => onAddWishlist(product)}>♡</button>
       </div>
     </div>
   );

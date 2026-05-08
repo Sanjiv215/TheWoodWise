@@ -9,5 +9,5 @@
 
 .wishlist-empty h2 {
   margin-top: 0;
-  color: #93c5fd;
+  color: var(--accent-color);
 }

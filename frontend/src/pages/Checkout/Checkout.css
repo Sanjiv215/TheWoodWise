@@ -4,58 +4,92 @@
 }
 
 .checkout-form {
-  width: min(720px, 100%);
-  padding: 28px;
-  border-radius: 28px;
-  background: rgba(15, 23, 42, 0.72);
-  border: 1px solid rgba(147, 197, 253, 0.18);
-  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.28);
+  width: min(760px, 100%);
+  padding: 34px;
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid #dbeafe;
+  box-shadow: 0 30px 90px rgba(15, 23, 42, 0.1), 0 0 40px rgba(96, 165, 250, 0.1);
+  backdrop-filter: blur(18px);
+}
+
+.checkout-form h1,
+.checkout-form h2,
+.checkout-form h3 {
+  color: #0f172a;
 }
 
 .pin-row {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 10px;
+  padding: 14px;
+  margin: 10px 0;
+  border-radius: 22px;
+  background: #f8fafc;
+  border: 1px solid #dbeafe;
+}
+
+.pin-row input {
+  margin: 0;
 }
 
 .payment-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 14px;
-  margin: 14px 0;
+  margin: 16px 0;
 }
 
 .payment-card {
-  min-height: 105px;
+  min-height: 116px;
+  position: relative;
   display: flex;
+  align-items: flex-start;
   flex-direction: column;
   justify-content: center;
-  gap: 10px;
-  color: #dbeafe;
-  background: rgba(8, 17, 32, 0.72);
-  border: 1px solid rgba(147, 197, 253, 0.18);
-  box-shadow: none;
+  gap: 9px;
+  color: #334155;
+  text-align: left;
+  background: #ffffff;
+  border: 1px solid #dbeafe;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.06);
 }
 
 .payment-card:hover {
-  background: rgba(59, 130, 246, 0.18);
+  background: #f8fafc;
+  border-color: #93c5fd;
 }
 
-.payment-card span {
-  color: #93c5fd;
+.payment-icon {
+  color: #2563eb;
   font-size: 13px;
   letter-spacing: 1px;
 }
 
+.payment-radio {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 2px solid #bfdbfe;
+  color: #2563eb;
+  font-size: 10px;
+}
+
 .selected-payment {
   border-color: #60a5fa;
-  background: rgba(59, 130, 246, 0.25);
-  box-shadow: 0 0 35px rgba(59, 130, 246, 0.25);
+  background: #eff6ff;
+  box-shadow: 0 18px 45px rgba(59, 130, 246, 0.16);
 }
 
 .cod-note,
 .delivery-text {
-  color: #93c5fd;
+  color: #2563eb;
   font-weight: 700;
 }
 

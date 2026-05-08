@@ -1,55 +1,59 @@
 .hero {
-  min-height: 88vh;
-  display: flex;
-  justify-content: center;
+  min-height: 92vh;
+  display: grid;
+  grid-template-columns: 1fr 0.92fr;
+  gap: 48px;
   align-items: center;
-  text-align: center;
-  padding: 140px 7% 86px;
+  padding: 150px 7% 95px;
   background:
-    radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.26), transparent 28%),
-    linear-gradient(135deg, #081120, #0f172a 52%, #111827);
+    radial-gradient(circle at 80% 20%, rgba(96, 165, 250, 0.28), transparent 34%),
+    radial-gradient(circle at 20% 70%, rgba(219, 234, 254, 0.8), transparent 36%),
+    linear-gradient(135deg, #ffffff, #f8fafc 52%, #f1f5f9);
 }
 
 .hero-text {
-  max-width: 660px;
+  max-width: 680px;
   animation: fadeIn 0.7s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 .hero h1 {
   margin: 10px 0;
-  font-size: 76px;
+  font-size: 78px;
   line-height: 1;
   letter-spacing: -1px;
+  color: #0f172a;
 }
 
 .hero p {
-  color: #c8ddff;
-  font-size: 18px;
-  line-height: 1.7;
+  color: #64748b;
+  font-size: 19px;
+  line-height: 1.75;
 }
 
 .hero-showcase {
   padding: 14px;
-  border-radius: 32px;
-  background: rgba(15, 23, 42, 0.62);
-  border: 1px solid rgba(147, 197, 253, 0.18);
-  box-shadow: 0 30px 90px rgba(59, 130, 246, 0.22);
+  border-radius: 34px;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid #dbeafe;
+  box-shadow: 0 30px 90px rgba(37, 99, 235, 0.16);
   animation: fadeIn 0.9s ease;
 }
 
 .hero-showcase img {
   width: 100%;
-  height: 480px;
+  height: 520px;
   object-fit: cover;
-  border-radius: 24px;
+  border-radius: 26px;
 }
 
 @media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    padding-top: 130px;
+  }
+
   .hero h1 {
-    font-size: 48px;
+    font-size: 50px;
   }
 
   .hero-showcase img {

@@ -2,9 +2,9 @@
   padding: 22px;
   height: fit-content;
   border-radius: 28px;
-  background: rgba(15, 23, 42, 0.74);
-  border: 1px solid rgba(147, 197, 253, 0.18);
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.08);
   backdrop-filter: blur(18px);
 }
 
@@ -13,7 +13,7 @@
 }
 
 .filter-title span {
-  color: #93c5fd;
+  color: var(--accent-color);
   font-size: 13px;
 }
 
@@ -21,7 +21,7 @@
   display: block;
   margin-top: 20px;
   margin-bottom: 8px;
-  color: #dbeafe;
+  color: var(--text-secondary);
   font-weight: 800;
 }
 
@@ -38,9 +38,9 @@
   width: 100%;
   padding: 10px 12px;
   border-radius: 14px;
-  color: #c9dcff;
-  background: rgba(8, 17, 32, 0.55);
-  border: 1px solid rgba(147, 197, 253, 0.12);
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   box-shadow: none;
 }
 
@@ -50,13 +50,13 @@
   display: grid;
   place-items: center;
   border-radius: 6px;
-  border: 1px solid rgba(147, 197, 253, 0.35);
-  color: #ffffff;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
   font-size: 12px;
 }
 
 .filter-chip:hover,
 .active-chip {
-  background: rgba(59, 130, 246, 0.2);
+  background: rgba(59, 130, 246, 0.15);
   border-color: rgba(96, 165, 250, 0.55);
 }

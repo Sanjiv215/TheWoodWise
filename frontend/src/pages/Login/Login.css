@@ -3,8 +3,8 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   background:
-    radial-gradient(circle at 15% 20%, rgba(59, 130, 246, 0.25), transparent 30%),
-    #081120;
+    radial-gradient(circle at 15% 20%, rgba(59, 130, 246, 0.15), transparent 30%),
+    var(--bg-primary);
 }
 
 .auth-art,
@@ -17,7 +17,7 @@
 
 .auth-art {
   background:
-    linear-gradient(135deg, rgba(8, 17, 32, 0.2), rgba(15, 23, 42, 0.88)),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(239, 246, 255, 0.7)),
     url("https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1100&q=80");
   background-size: cover;
   background-position: center;
@@ -31,7 +31,7 @@
 
 .auth-art p {
   max-width: 520px;
-  color: #dbeafe;
+  color: var(--text-secondary);
   line-height: 1.7;
 }
 
@@ -44,15 +44,15 @@
   max-width: 460px;
   padding: 34px;
   border-radius: 30px;
-  background: rgba(15, 23, 42, 0.68);
-  border: 1px solid rgba(147, 197, 253, 0.2);
-  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.33), 0 0 35px rgba(59, 130, 246, 0.14);
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 30px 90px rgba(15, 23, 42, 0.1), 0 0 35px rgba(59, 130, 246, 0.12);
   backdrop-filter: blur(20px);
   animation: fadeIn 0.45s ease;
 }
 
 .glass-form a {
-  color: #93c5fd;
+  color: var(--accent-color);
 }
 
 .password-row {
@@ -70,9 +70,9 @@
 .auth-error {
   padding: 10px 12px;
   border-radius: 14px;
-  color: #fecaca;
-  background: rgba(127, 29, 29, 0.35);
-  border: 1px solid rgba(252, 165, 165, 0.25);
+  color: var(--danger-text);
+  background: var(--danger-bg);
+  border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 @media (max-width: 850px) {

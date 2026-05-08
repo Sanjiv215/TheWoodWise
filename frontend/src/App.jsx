@@ -1,5 +1,6 @@
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import axios from "axios";
 import Navbar from "./components/Navbar/Navbar.jsx";
 import Footer from "./components/Footer/Footer.jsx";
 import Chatbot from "./components/Chatbot/Chatbot.jsx";
@@ -29,6 +30,7 @@ function App() {
   const [orders, setOrders] = useState(() => getSavedData("wood_orders", []));
   const [user, setUser] = useState(() => getSavedData("wood_user", null));
   const [toast, setToast] = useState("");
+  const API_URL = "http://localhost:5000/api/auth";
 
   useEffect(() => localStorage.setItem("wood_cart", JSON.stringify(cart)), [cart]);
   useEffect(() => localStorage.setItem("wood_wishlist", JSON.stringify(wishlist)), [wishlist]);
@@ -66,16 +68,22 @@ function App() {
     showToast("Removed from cart");
   }
 
-  function signup(name, email, password) {
+  async function signup(name, email, password) {
     if (name === "" || email === "" || password.length < 4) {
       showToast("Please fill all fields");
       return;
     }
-    const users = getSavedData("wood_users", []);
-    users.push({ name, email, password });
-    localStorage.setItem("wood_users", JSON.stringify(users));
-    showToast("Signup done. Verify OTP");
-    navigate("/otp-verification");
+    try {
+      const res = await axios.post(`${API_URL}/signup`, {
+        name: name,
+        email: email,
+        password: password
+      });
+      showToast(res.data.message || "Signup successful");
+      navigate("/login");
+    } catch (error) {
+      showToast(error.response?.data?.message || "Signup failed");
+    }
   }
 
   function verifyOtp(otp) {
@@ -87,20 +95,28 @@ function App() {
     }
   }
 
-  function login(email, password) {
-    const users = getSavedData("wood_users", []);
-    const foundUser = users.find((item) => item.email === email && item.password === password);
-    if (!foundUser) {
-      showToast("Invalid login details");
+  async function login(email, password) {
+    if (email === "" || password === "") {
+      showToast("Please fill all fields");
       return;
     }
-    setUser({ name: foundUser.name, email: foundUser.email });
-    showToast("Login successful");
-    navigate("/profile");
+    try {
+      const res = await axios.post(`${API_URL}/login`, {
+        email: email,
+        password: password
+      });
+      localStorage.setItem("wood_token", res.data.token);
+      setUser(res.data.user);
+      showToast(res.data.message || "Login successful");
+      navigate("/");
+    } catch (error) {
+      showToast(error.response?.data?.message || "Invalid credentials");
+    }
   }
 
   function logout() {
     setUser(null);
+    localStorage.removeItem("wood_token");
     showToast("Logged out");
     navigate("/");
   }

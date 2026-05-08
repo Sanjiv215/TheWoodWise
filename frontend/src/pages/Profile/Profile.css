@@ -5,8 +5,8 @@
   margin-bottom: 25px;
   padding: 24px;
   border-radius: 26px;
-  background: rgba(15, 23, 42, 0.72);
-  border: 1px solid rgba(147, 197, 253, 0.16);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
 }
 
 .profile-avatar {
@@ -15,7 +15,7 @@
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: linear-gradient(135deg, #1e3a8a, #60a5fa);
+  background: linear-gradient(135deg, #2563eb, #60a5fa);
   color: white;
   font-size: 40px;
   font-weight: 800;
@@ -36,8 +36,8 @@
 .profile-box {
   padding: 24px;
   border-radius: 22px;
-  background: rgba(15, 23, 42, 0.72);
-  border: 1px solid rgba(147, 197, 253, 0.16);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   transition: 0.25s;
 }
 
@@ -47,21 +47,21 @@
 }
 
 .profile-box p {
-  color: #93c5fd;
+  color: var(--accent-color);
 }
 
 .zepto-list {
   display: grid;
   border-radius: 22px;
-  background: rgba(15, 23, 42, 0.72);
-  border: 1px solid rgba(147, 197, 253, 0.16);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   overflow: hidden;
 }
 
 .zepto-list a,
 .zepto-list span {
   padding: 18px;
-  border-bottom: 1px solid rgba(147, 197, 253, 0.1);
+  border-bottom: 1px solid var(--border-color);
 }
 
 @media (max-width: 900px) {
