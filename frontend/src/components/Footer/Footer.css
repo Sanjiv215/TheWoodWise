@@ -1,0 +1,12 @@
+.footer {
+  padding: 38px 7%;
+  text-align: center;
+  border-top: 1px solid rgba(147, 197, 253, 0.13);
+  color: #bcd5ff;
+  background: rgba(8, 17, 32, 0.7);
+}
+
+.footer h3 {
+  color: #93c5fd;
+  margin-top: 0;
+}

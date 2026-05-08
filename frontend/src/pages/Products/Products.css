@@ -1,0 +1,34 @@
+.shop-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+.shop-products {
+  min-height: 360px;
+}
+
+.mobile-filter-btn {
+  display: none;
+  margin-bottom: 18px;
+}
+
+@media (max-width: 900px) {
+  .shop-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .mobile-filter-btn {
+    display: inline-flex;
+  }
+
+  .filter-drawer {
+    display: none;
+  }
+
+  .show-filter {
+    display: block;
+    animation: fadeIn 0.25s ease;
+  }
+}

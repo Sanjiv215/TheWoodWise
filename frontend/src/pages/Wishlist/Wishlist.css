@@ -1,0 +1,13 @@
+.wishlist-card-wrap {
+  animation: fadeIn 0.45s ease;
+}
+
+.wishlist-card-wrap .remove-btn {
+  width: 100%;
+  margin-top: 12px;
+}
+
+.wishlist-empty h2 {
+  margin-top: 0;
+  color: #93c5fd;
+}
