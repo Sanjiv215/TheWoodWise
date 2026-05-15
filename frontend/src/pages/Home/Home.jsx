@@ -1,18 +1,48 @@
+import { useEffect, useState } from "react";
 import HeroSection from "../../components/HeroSection/HeroSection.jsx";
 import ProductCard from "../../components/ProductCard/ProductCard.jsx";
-import products from "../../data/products.js";
 import { Link } from "react-router-dom";
+import { getProducts } from "../../services/productService.js";
 import "./Home.css";
 
-function Home({ onAddCart, onAddWishlist }) {
-  const featuredProducts = products.slice(0, 4);
-  const trendingProducts = products.slice(4, 8);
+function Home({ cartIds, wishlistIds, onToggleCart, onToggleWishlist }) {
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [trendingProducts, setTrendingProducts] = useState([]);
   const categories = ["Sofa", "Chair", "Table", "Bed", "Lamp", "Wardrobe", "Office Furniture"];
   const reviews = [
     { name: "Aarav", text: "The sofa looks premium and the website feels very smooth." },
     { name: "Meera", text: "Loved the dark blue design and simple shopping flow." },
     { name: "Kabir", text: "The office chair collection is clean and easy to compare." }
   ];
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadProducts() {
+      try {
+        const [featured, trending] = await Promise.all([
+          getProducts({ sort: "newest", limit: 4 }),
+          getProducts({ sort: "popular", limit: 4 }),
+        ]);
+
+        if (!cancelled) {
+          setFeaturedProducts(featured);
+          setTrendingProducts(trending);
+        }
+      } catch {
+        if (!cancelled) {
+          setFeaturedProducts([]);
+          setTrendingProducts([]);
+        }
+      }
+    }
+
+    loadProducts();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <main>
@@ -25,7 +55,14 @@ function Home({ onAddCart, onAddWishlist }) {
         </div>
         <div className="product-grid">
           {featuredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} onAddCart={onAddCart} onAddWishlist={onAddWishlist} />
+            <ProductCard
+              key={product.id}
+              product={product}
+              isInCart={cartIds.has(product.id)}
+              isWishlisted={wishlistIds.has(product.id)}
+              onToggleCart={onToggleCart}
+              onToggleWishlist={onToggleWishlist}
+            />
           ))}
         </div>
       </section>
@@ -50,7 +87,14 @@ function Home({ onAddCart, onAddWishlist }) {
         </div>
         <div className="product-grid handpicked-grid">
           {trendingProducts.map((product) => (
-            <ProductCard key={product.id} product={product} onAddCart={onAddCart} onAddWishlist={onAddWishlist} />
+            <ProductCard
+              key={product.id}
+              product={product}
+              isInCart={cartIds.has(product.id)}
+              isWishlisted={wishlistIds.has(product.id)}
+              onToggleCart={onToggleCart}
+              onToggleWishlist={onToggleWishlist}
+            />
           ))}
         </div>
       </section>

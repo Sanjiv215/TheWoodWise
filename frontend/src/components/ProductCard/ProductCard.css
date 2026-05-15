@@ -1,7 +1,7 @@
 .product-card {
   overflow: hidden;
   padding-bottom: 20px;
-  border-radius: 28px;
+  border-radius: 8px;
   background: linear-gradient(145deg, #ffffff, rgba(239, 246, 255, 0.9));
   border: 1px solid var(--border-color);
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.08);
@@ -45,9 +45,15 @@
 }
 
 .category-text,
+.product-brand,
 .rating {
   color: var(--accent-color);
   font-weight: 700;
+}
+
+.product-brand {
+  color: var(--text-secondary);
+  font-size: 13px;
 }
 
 .rating {
@@ -75,4 +81,16 @@
   place-items: center;
   padding: 0;
   font-size: 20px;
+  color: #94a3b8;
+}
+
+.active-heart {
+  color: #dc2626;
+  border-color: #fecaca;
+  background: #fff1f2;
+}
+
+.active-cart {
+  background: #0f172a;
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.18);
 }

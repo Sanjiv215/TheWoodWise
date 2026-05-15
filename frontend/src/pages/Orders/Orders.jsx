@@ -13,11 +13,12 @@ function Orders({ orders }) {
       ) : (
         <div className="order-list">
           {orders.map((order) => (
-            <div className="order-card" key={order.id}>
-              <h3>Order #{order.id}</h3>
-              <p>{order.date}</p>
-              <p>{order.items.length} item(s)</p>
-              <h3>₹{order.total.toLocaleString("en-IN")}</h3>
+            <div className="order-card" key={`${order.id}-${order.date}-${order.time}`}>
+              <h3>{order.product}</h3>
+              <p>ID: {order.id}</p>
+              <p>{order.date} · {order.time}</p>
+              <p>Payment: {order.paymentMode}</p>
+              <h3>₹{order.price.toLocaleString("en-IN")}</h3>
             </div>
           ))}
         </div>

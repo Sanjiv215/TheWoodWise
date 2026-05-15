@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { getCartCount, getCartTotal } from "../../utils/cart";
 import "./Profile.css";
 
 function Profile({ user, cart, wishlist, orders, onLogout }) {
@@ -14,44 +15,92 @@ function Profile({ user, cart, wishlist, orders, onLogout }) {
     );
   }
 
+  const latestOrder = orders[0];
+  const cartCount = getCartCount(cart);
+  const cartTotal = getCartTotal(cart);
+  const recentActivity = [
+    `${cartCount} item${cartCount === 1 ? "" : "s"} in cart`,
+    `${wishlist.length} saved product${wishlist.length === 1 ? "" : "s"}`,
+    latestOrder ? `Last order: ${latestOrder.product}` : "No orders yet"
+  ];
+
   return (
-    <main className="page">
-      <div className="profile-top">
+    <main className="page profile-page">
+      <section className="profile-hero">
         <div className="profile-avatar">{user.name.charAt(0).toUpperCase()}</div>
         <div>
+          <p className="blue-text">My WoodWise</p>
           <h1>{user.name}</h1>
           <p>{user.email}</p>
         </div>
         <button className="profile-logout" onClick={onLogout}>Logout</button>
-      </div>
+      </section>
 
-      <div className="profile-grid">
-        <Link to="/orders" className="profile-box">
-          <h3>Orders</h3>
-          <p>{orders.length} placed</p>
+      <section className="profile-metrics">
+        <Link to="/orders" className="profile-card">
+          <span>Orders</span>
+          <strong>{orders.length}</strong>
+          <p>{latestOrder ? "Latest order ready to review" : "Start your first order"}</p>
         </Link>
-        <Link to="/wishlist" className="profile-box">
-          <h3>Wishlist</h3>
-          <p>{wishlist.length} saved</p>
+        <Link to="/wishlist" className="profile-card">
+          <span>Wishlist</span>
+          <strong>{wishlist.length}</strong>
+          <p>Saved pieces across the catalog</p>
         </Link>
-        <Link to="/cart" className="profile-box">
-          <h3>Cart</h3>
-          <p>{cart.length} item(s)</p>
+        <Link to="/cart" className="profile-card">
+          <span>Cart</span>
+          <strong>{cartCount}</strong>
+          <p>₹{cartTotal.toLocaleString("en-IN")} current total</p>
         </Link>
-        <div className="profile-box">
-          <h3>Addresses</h3>
-          <p>2 saved</p>
+      </section>
+
+      <section className="profile-content">
+        <div className="profile-panel">
+          <div className="panel-heading">
+            <div>
+              <p className="blue-text">Orders</p>
+              <h2>Order Summary</h2>
+            </div>
+            <Link to="/orders">View all</Link>
+          </div>
+          {latestOrder ? (
+            <div className="order-preview">
+              <strong>{latestOrder.product}</strong>
+              <span>{latestOrder.date} · {latestOrder.time}</span>
+              <p>{latestOrder.paymentMode} · ₹{latestOrder.price.toLocaleString("en-IN")}</p>
+            </div>
+          ) : (
+            <div className="empty-inline">No orders yet. Explore the catalog and build your first room.</div>
+          )}
         </div>
-      </div>
 
-      <div className="zepto-list">
-        <Link to="/orders">My Orders</Link>
-        <Link to="/wishlist">Saved Products</Link>
-        <Link to="/cart">Cart & Checkout</Link>
-        <span>Address Book</span>
-        <span>Account Settings</span>
-        <span>Help & Support</span>
-      </div>
+        <div className="profile-panel">
+          <div className="panel-heading">
+            <div>
+              <p className="blue-text">Activity</p>
+              <h2>Recent Activity</h2>
+            </div>
+          </div>
+          <div className="activity-list">
+            {recentActivity.map((item) => (
+              <span key={item}>{item}</span>
+            ))}
+          </div>
+        </div>
+
+        <div className="profile-panel">
+          <div className="panel-heading">
+            <div>
+              <p className="blue-text">Info</p>
+              <h2>Personal Info</h2>
+            </div>
+          </div>
+          <div className="info-list">
+            <span>Name <strong>{user.name}</strong></span>
+            <span>Email <strong>{user.email}</strong></span>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }

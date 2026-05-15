@@ -9,14 +9,19 @@ function Signup({ onSignup }) {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
+
     if (name === "" || email === "" || password.length < 4) {
       setError("Please fill all fields. Password needs 4 characters.");
       return;
     }
+
     setError("");
-    onSignup(name, email, password);
+    await onSignup(name, email, password);
+    setName("");
+    setEmail("");
+    setPassword("");
   }
 
   return (

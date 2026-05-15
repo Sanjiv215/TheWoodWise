@@ -40,6 +40,7 @@ function FilterSidebar({ category, setCategory, maxPrice, setMaxPrice, rating, s
         <option value="low">Price low to high</option>
         <option value="high">Price high to low</option>
         <option value="newest">New arrivals</option>
+        <option value="popular">Most popular</option>
       </select>
     </aside>
   );

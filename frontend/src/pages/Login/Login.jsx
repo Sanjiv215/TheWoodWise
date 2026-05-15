@@ -7,19 +7,25 @@ function Login({ onLogin }) {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
+
     if (email === "" || password === "") {
       setError("Please enter email and password.");
       return;
     }
+
     setError("");
-    onLogin(email, password);
+    setLoading(true);
+    await onLogin(email, password);
+    setLoading(false);
   }
 
   return (
     <main className="auth-page">
+
       <section className="auth-art">
         <p className="blue-text">The WoodWise</p>
         <h1>Welcome back to your blue showroom.</h1>
@@ -27,20 +33,53 @@ function Login({ onLogin }) {
       </section>
 
       <section className="auth-form-side">
+
         <form className="glass-form" onSubmit={handleSubmit}>
+
           <p className="blue-text">Welcome Back</p>
           <h1>Login</h1>
+
           {error && <p className="auth-error">{error}</p>}
-          <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={loading}
+          />
+
           <div className="password-row">
-            <input type={showPassword ? "text" : "password"} placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-            <button type="button" onClick={() => setShowPassword(!showPassword)}>{showPassword ? "Hide" : "Show"}</button>
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              disabled={loading}
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
           </div>
-          <button>Login</button>
+
+          <button type="submit" disabled={loading}>
+            {loading ? "Logging in…" : "Login"}
+          </button>
+
           <Link to="/forgot-password">Forgot password?</Link>
-          <p>New user? <Link to="/signup">Create account</Link></p>
+
+          <p>
+            New user? <Link to="/signup">Create account</Link>
+          </p>
+
         </form>
+
       </section>
+
     </main>
   );
 }

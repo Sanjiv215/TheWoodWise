@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "./components/Navbar/Navbar.jsx";
 import Footer from "./components/Footer/Footer.jsx";
-import Chatbot from "./components/Chatbot/Chatbot.jsx";
 import Home from "./pages/Home/Home.jsx";
 import Products from "./pages/Products/Products.jsx";
 import ProductDetail from "./pages/ProductDetail/ProductDetail.jsx";
@@ -14,58 +13,112 @@ import Orders from "./pages/Orders/Orders.jsx";
 import Profile from "./pages/Profile/Profile.jsx";
 import Login from "./pages/Login/Login.jsx";
 import Signup from "./pages/Signup/Signup.jsx";
-import OtpVerification from "./pages/OtpVerification/OtpVerification.jsx";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword.jsx";
+import { getAccountData, logoutAccount, saveAccountData } from "./services/accountService";
+import { getCartCount, normalizeCart } from "./utils/cart";
 import "./App.css";
 
-function getSavedData(name, defaultValue) {
-  const saved = localStorage.getItem(name);
-  return saved ? JSON.parse(saved) : defaultValue;
-}
+const API_URL = import.meta.env.VITE_API_URL || "/api";
 
 function App() {
   const navigate = useNavigate();
-  const [cart, setCart] = useState(() => getSavedData("wood_cart", []));
-  const [wishlist, setWishlist] = useState(() => getSavedData("wood_wishlist", []));
-  const [orders, setOrders] = useState(() => getSavedData("wood_orders", []));
-  const [user, setUser] = useState(() => getSavedData("wood_user", null));
+  const [cart, setCart] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
+  const [accountReady, setAccountReady] = useState(!token);
   const [toast, setToast] = useState("");
-  const API_URL = "http://localhost:5000/api/auth";
 
-  useEffect(() => localStorage.setItem("wood_cart", JSON.stringify(cart)), [cart]);
-  useEffect(() => localStorage.setItem("wood_wishlist", JSON.stringify(wishlist)), [wishlist]);
-  useEffect(() => localStorage.setItem("wood_orders", JSON.stringify(orders)), [orders]);
-  useEffect(() => localStorage.setItem("wood_user", JSON.stringify(user)), [user]);
+  const normalizedCart = normalizeCart(cart);
+  const cartCount = getCartCount(normalizedCart);
+  const cartIds = new Set(normalizedCart.map((item) => item.id));
+  const wishlistIds = new Set(wishlist.map((item) => item.id));
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadAccount() {
+      if (!token) {
+        setAccountReady(true);
+        return;
+      }
+
+      try {
+        const data = await getAccountData(token);
+        if (cancelled) return;
+
+        setOrders(data.orders || []);
+      } catch {
+        if (!cancelled) {
+          setUser(null);
+          setToken(null);
+          showToast("Please login again");
+        }
+      } finally {
+        if (!cancelled) setAccountReady(true);
+      }
+    }
+
+    setAccountReady(!token);
+    loadAccount();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [token]);
+
+  useEffect(() => {
+    if (!token || !accountReady) return;
+
+    saveAccountData(token, {
+      orders,
+    }).catch(() => showToast("Could not sync account data"));
+  }, [token, accountReady, orders]);
 
   function showToast(message) {
     setToast(message);
-    setTimeout(() => setToast(""), 2200);
+    window.setTimeout(() => setToast(""), 2200);
   }
 
-  function addToCart(product) {
-    const productForCart = { ...product, cartId: Date.now() };
-    setCart([...cart, productForCart]);
+  function toggleCart(product, quantity = 1) {
+    setCart((currentCart) => {
+      const normalized = normalizeCart(currentCart);
+      const exists = normalized.some((item) => item.id === product.id);
+      if (exists) return normalized.filter((item) => item.id !== product.id);
+      return [...normalized, { ...product, quantity }];
+    });
+    showToast(cartIds.has(product.id) ? "Removed from cart" : "Added to cart");
+  }
+
+  function addToCart(product, quantity = 1) {
+    setCart((currentCart) => {
+      const normalized = normalizeCart(currentCart);
+      const existing = normalized.find((item) => item.id === product.id);
+      if (!existing) return [...normalized, { ...product, quantity }];
+      return normalized.map((item) => item.id === product.id ? { ...item, quantity: item.quantity + quantity } : item);
+    });
     showToast("Added to cart");
   }
 
-  function addToWishlist(product) {
-    const alreadyAdded = wishlist.find((item) => item.id === product.id);
-    if (alreadyAdded) {
-      showToast("Already in wishlist");
-      return;
-    }
-    setWishlist([...wishlist, product]);
-    showToast("Added to wishlist");
-  }
-
-  function removeFromWishlist(id) {
-    setWishlist(wishlist.filter((item) => item.id !== id));
-    showToast("Removed from wishlist");
-  }
-
-  function removeFromCart(index) {
-    setCart(cart.filter((item, itemIndex) => itemIndex !== index));
+  function removeFromCart(id) {
+    setCart((currentCart) => normalizeCart(currentCart).filter((item) => item.id !== id));
     showToast("Removed from cart");
+  }
+
+  function updateCartQuantity(id, quantity) {
+    setCart((currentCart) => normalizeCart(currentCart).map((item) => (
+      item.id === id ? { ...item, quantity: Math.max(1, quantity) } : item
+    )));
+  }
+
+  function toggleWishlist(product) {
+    setWishlist((currentWishlist) => {
+      const exists = currentWishlist.some((item) => item.id === product.id);
+      if (exists) return currentWishlist.filter((item) => item.id !== product.id);
+      return [...currentWishlist, product];
+    });
+    showToast(wishlistIds.has(product.id) ? "Removed from wishlist" : "Added to wishlist");
   }
 
   async function signup(name, email, password) {
@@ -73,25 +126,13 @@ function App() {
       showToast("Please fill all fields");
       return;
     }
+
     try {
-      const res = await axios.post(`${API_URL}/signup`, {
-        name: name,
-        email: email,
-        password: password
-      });
-      showToast(res.data.message || "Signup successful");
+      await axios.post(`${API_URL}/signup`, { name, email, password });
+      showToast("Signup successful");
       navigate("/login");
     } catch (error) {
       showToast(error.response?.data?.message || "Signup failed");
-    }
-  }
-
-  function verifyOtp(otp) {
-    if (otp === "1234") {
-      showToast("OTP verified. Please login");
-      navigate("/login");
-    } else {
-      showToast("Wrong OTP. Try 1234");
     }
   }
 
@@ -100,67 +141,127 @@ function App() {
       showToast("Please fill all fields");
       return;
     }
+
     try {
-      const res = await axios.post(`${API_URL}/login`, {
-        email: email,
-        password: password
-      });
-      localStorage.setItem("wood_token", res.data.token);
+      const res = await axios.post(`${API_URL}/login`, { email, password });
+      const accountData = res.data.data || {};
+      const nextOrders = accountData.orders?.length ? accountData.orders : orders;
+
+      setAccountReady(false);
       setUser(res.data.user);
-      showToast(res.data.message || "Login successful");
-      navigate("/");
+      setToken(res.data.token);
+      setOrders(nextOrders);
+      setAccountReady(true);
+      showToast("Login successful");
+      navigate("/profile");
     } catch (error) {
       showToast(error.response?.data?.message || "Invalid credentials");
     }
   }
 
-  function logout() {
+  async function logout() {
+    await logoutAccount(token);
+    setToken(null);
     setUser(null);
-    localStorage.removeItem("wood_token");
     showToast("Logged out");
     navigate("/");
   }
 
-  function placeOrder() {
-    if (cart.length === 0) {
+  async function placeOrder(paymentMode) {
+    if (!user || !token) {
+      showToast("Please login before placing an order");
+      navigate("/login");
+      return;
+    }
+
+    if (normalizedCart.length === 0) {
       showToast("Cart is empty");
       return;
     }
-    const total = cart.reduce((sum, item) => sum + item.price, 0);
-    const newOrder = {
-      id: Date.now(),
-      date: new Date().toLocaleDateString(),
-      items: cart,
-      total: total
+
+    const now = new Date();
+    const newOrders = normalizedCart.map((item) => ({
+      product: item.title,
+      id: item.id,
+      price: item.price,
+      paymentMode,
+      date: now.toLocaleDateString(),
+      time: now.toLocaleTimeString(),
+    }));
+    const nextOrders = [...newOrders, ...orders];
+    const nextData = {
+      orders: nextOrders,
     };
-    setOrders([newOrder, ...orders]);
+
+    try {
+      await saveAccountData(token, nextData);
+    } catch {
+      showToast("Order could not be saved");
+      return;
+    }
+
+    setOrders(nextOrders);
     setCart([]);
-    showToast("Demo order placed");
+    showToast("Order placed");
     navigate("/orders");
   }
 
+  const commerceProps = {
+    cartIds,
+    wishlistIds,
+    onAddCart: addToCart,
+    onToggleCart: toggleCart,
+    onToggleWishlist: toggleWishlist
+  };
+
   return (
     <>
-      <Navbar cartCount={cart.length} wishCount={wishlist.length} user={user} onLogout={logout} />
+      <Navbar cartCount={cartCount} wishCount={wishlist.length} user={user} onLogout={logout} />
 
       {toast && <div className="toast">{toast}</div>}
 
       <Routes>
-        <Route path="/" element={<Home onAddCart={addToCart} onAddWishlist={addToWishlist} />} />
-        <Route path="/products" element={<Products onAddCart={addToCart} onAddWishlist={addToWishlist} />} />
-        <Route path="/product/:id" element={<ProductDetail onAddCart={addToCart} onAddWishlist={addToWishlist} />} />
-        <Route path="/wishlist" element={<Wishlist wishlist={wishlist} onAddCart={addToCart} onAddWishlist={addToWishlist} onRemoveWishlist={removeFromWishlist} />} />
-        <Route path="/cart" element={<Cart cart={cart} onRemoveCart={removeFromCart} />} />
-        <Route path="/checkout" element={<Checkout cart={cart} onPlaceOrder={placeOrder} />} />
+        <Route path="/" element={<Home {...commerceProps} />} />
+        <Route path="/products" element={<Products {...commerceProps} />} />
+        <Route path="/product/:id" element={<ProductDetail {...commerceProps} />} />
+        <Route path="/wishlist" element={<Wishlist wishlist={wishlist} {...commerceProps} />} />
+        <Route
+          path="/cart"
+          element={(
+            <Cart
+              cart={normalizedCart}
+              onRemoveCart={removeFromCart}
+              onUpdateQuantity={updateCartQuantity}
+            />
+          )}
+        />
+        <Route
+          path="/checkout"
+          element={(
+            <Checkout
+              cart={normalizedCart}
+              onPlaceOrder={placeOrder}
+            />
+          )}
+        />
         <Route path="/orders" element={<Orders orders={orders} />} />
-        <Route path="/profile" element={<Profile user={user} cart={cart} wishlist={wishlist} orders={orders} onLogout={logout} />} />
+        <Route
+          path="/profile"
+          element={(
+            <Profile
+              user={user}
+              cart={normalizedCart}
+              wishlist={wishlist}
+              orders={orders}
+              onLogout={logout}
+            />
+          )}
+        />
         <Route path="/login" element={<Login onLogin={login} />} />
         <Route path="/signup" element={<Signup onSignup={signup} />} />
-        <Route path="/otp-verification" element={<OtpVerification onVerifyOtp={verifyOtp} />} />
         <Route path="/forgot-password" element={<ForgotPassword showToast={showToast} />} />
       </Routes>
 
-      <Chatbot />
       <Footer />
     </>
   );

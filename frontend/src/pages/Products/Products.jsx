@@ -1,37 +1,54 @@
-import { useState } from "react";
-import products from "../../data/products.js";
+import { useState, useEffect } from "react";
 import ProductCard from "../../components/ProductCard/ProductCard.jsx";
 import FilterSidebar from "../../components/FilterSidebar/FilterSidebar.jsx";
 import SearchBar from "../../components/SearchBar/SearchBar.jsx";
 import Loader from "../../components/Loader/Loader.jsx";
+import { filterProducts } from "../../services/productService.js";
 import "./Products.css";
 
-function Products({ onAddCart, onAddWishlist }) {
+function Products({ cartIds, wishlistIds, onToggleCart, onToggleWishlist }) {
+  const pageSize = 8;
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [maxPrice, setMaxPrice] = useState(60000);
   const [rating, setRating] = useState(0);
   const [sort, setSort] = useState("newest");
-  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
   const [filterOpen, setFilterOpen] = useState(false);
+  const [shownProducts, setShownProducts] = useState([]);
 
-  let shownProducts = products.filter((product) => {
-    const searchMatch = product.title.toLowerCase().includes(search.toLowerCase());
-    const categoryMatch = category === "All" || product.category === category;
-    const priceMatch = product.price <= Number(maxPrice);
-    const ratingMatch = product.rating >= Number(rating);
-    return searchMatch && categoryMatch && priceMatch && ratingMatch;
-  });
+  useEffect(() => {
+    setPage(1);
+  }, [search, category, maxPrice, rating, sort]);
 
-  if (sort === "low") shownProducts.sort((a, b) => a.price - b.price);
-  if (sort === "high") shownProducts.sort((a, b) => b.price - a.price);
-  if (sort === "rating") shownProducts.sort((a, b) => b.rating - a.rating);
-  if (sort === "newest") shownProducts.sort((a, b) => new Date(b.date) - new Date(a.date));
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadProducts() {
+      setLoading(true);
+
+      try {
+        const result = await filterProducts({ search, category, maxPrice, rating, sort, page, limit: pageSize });
+        if (!cancelled) {
+          setShownProducts(result.items || []);
+          setTotalPages(result.pages || 1);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    loadProducts();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [search, category, maxPrice, rating, sort, page]);
 
   function changeSearch(value) {
-    setLoading(true);
     setSearch(value);
-    setTimeout(() => setLoading(false), 300);
   }
 
   return (
@@ -68,8 +85,31 @@ function Products({ onAddCart, onAddWishlist }) {
           ) : (
             <div className="product-grid">
               {shownProducts.map((product) => (
-                <ProductCard key={product.id} product={product} onAddCart={onAddCart} onAddWishlist={onAddWishlist} />
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  isInCart={cartIds.has(product.id)}
+                  isWishlisted={wishlistIds.has(product.id)}
+                  onToggleCart={onToggleCart}
+                  onToggleWishlist={onToggleWishlist}
+                />
               ))}
+            </div>
+          )}
+
+          {!loading && totalPages > 1 && (
+            <div className="pagination">
+              <button disabled={page === 1} onClick={() => setPage(page - 1)}>Previous</button>
+              {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+                <button
+                  className={pageNumber === page ? "active-page" : ""}
+                  key={pageNumber}
+                  onClick={() => setPage(pageNumber)}
+                >
+                  {pageNumber}
+                </button>
+              ))}
+              <button disabled={page === totalPages} onClick={() => setPage(page + 1)}>Next</button>
             </div>
           )}
         </div>
