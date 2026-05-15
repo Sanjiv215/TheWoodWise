@@ -13,7 +13,7 @@ function HeroSection() {
         <Link to="/products" className="main-btn">Shop Collection</Link>
       </div>
       <div className="hero-showcase">
-        <img src="../images/home.png" />
+        <img src="/images/home.png" alt="WoodWise furniture collection" />
       </div>
     </section>
   );

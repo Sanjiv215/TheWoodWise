@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { getCartCount, getCartTotal } from "../../utils/cart";
 import "./Profile.css";
 
-function Profile({ user, cart, wishlist, orders, onLogout }) {
+function Profile({ user, cart, wishlist, orders, onLogout, onDeleteAccount }) {
   if (!user) {
     return (
       <main className="page">
@@ -33,7 +33,10 @@ function Profile({ user, cart, wishlist, orders, onLogout }) {
           <h1>{user.name}</h1>
           <p>{user.email}</p>
         </div>
-        <button className="profile-logout" onClick={onLogout}>Logout</button>
+        <div className="profile-actions">
+          <button className="profile-logout" onClick={onLogout}>Logout</button>
+          <button className="profile-delete" onClick={onDeleteAccount}>Delete Account</button>
+        </div>
       </section>
 
       <section className="profile-metrics">
@@ -99,6 +102,17 @@ function Profile({ user, cart, wishlist, orders, onLogout }) {
             <span>Name <strong>{user.name}</strong></span>
             <span>Email <strong>{user.email}</strong></span>
           </div>
+        </div>
+
+        <div className="profile-panel danger-panel">
+          <div className="panel-heading">
+            <div>
+              <p className="blue-text">Account</p>
+              <h2>Delete Account</h2>
+            </div>
+          </div>
+          <p>This permanently removes your account, sessions and saved order data.</p>
+          <button className="profile-delete" onClick={onDeleteAccount}>Delete my account</button>
         </div>
       </section>
     </main>

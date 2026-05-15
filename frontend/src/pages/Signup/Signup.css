@@ -18,7 +18,7 @@
 .signup-art {
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(239, 246, 255, 0.7)),
-    url("https://images.unsplash.com/photo-1616046229478-9901c5536a45?auto=format&fit=crop&w=1100&q=80");
+    url("/images/home.png");
   background-size: cover;
   background-position: center;
 }
@@ -66,12 +66,37 @@
   padding: 13px 14px;
 }
 
+.glass-form input:disabled,
+.glass-form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
 .auth-error {
   padding: 10px 12px;
   border-radius: 14px;
   color: var(--danger-text);
   background: var(--danger-bg);
   border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.auth-success {
+  padding: 10px 12px;
+  border-radius: 14px;
+  color: #166534;
+  background: #dcfce7;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.link-button {
+  color: var(--accent-color);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.link-button:hover {
+  background: transparent;
 }
 
 @media (max-width: 850px) {

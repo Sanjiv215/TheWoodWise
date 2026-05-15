@@ -14,20 +14,40 @@ import Profile from "./pages/Profile/Profile.jsx";
 import Login from "./pages/Login/Login.jsx";
 import Signup from "./pages/Signup/Signup.jsx";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword.jsx";
-import { getAccountData, logoutAccount, saveAccountData } from "./services/accountService";
+import { deleteAccount, getAccountData, logoutAccount, saveAccountData } from "./services/accountService";
 import { getCartCount, normalizeCart } from "./utils/cart";
 import "./App.css";
 
 const API_URL = import.meta.env.VITE_API_URL || "/api";
+const SESSION_KEY = "woodwise_session";
+
+function loadSession() {
+  try {
+    const session = JSON.parse(localStorage.getItem(SESSION_KEY) || "null");
+    return session?.token && session?.user ? session : { token: null, user: null };
+  } catch {
+    return { token: null, user: null };
+  }
+}
+
+function saveSession(user, token) {
+  if (!user || !token) {
+    localStorage.removeItem(SESSION_KEY);
+    return;
+  }
+
+  localStorage.setItem(SESSION_KEY, JSON.stringify({ user, token }));
+}
 
 function App() {
   const navigate = useNavigate();
+  const savedSession = loadSession();
   const [cart, setCart] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [orders, setOrders] = useState([]);
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
-  const [accountReady, setAccountReady] = useState(!token);
+  const [user, setUser] = useState(savedSession.user);
+  const [token, setToken] = useState(savedSession.token);
+  const [accountReady, setAccountReady] = useState(!savedSession.token);
   const [toast, setToast] = useState("");
 
   const normalizedCart = normalizeCart(cart);
@@ -53,6 +73,7 @@ function App() {
         if (!cancelled) {
           setUser(null);
           setToken(null);
+          saveSession(null, null);
           showToast("Please login again");
         }
       } finally {
@@ -121,18 +142,26 @@ function App() {
     showToast(wishlistIds.has(product.id) ? "Removed from wishlist" : "Added to wishlist");
   }
 
-  async function signup(name, email, password) {
+  async function signup({ name, email, password, otp }) {
     if (name === "" || email === "" || password.length < 4) {
       showToast("Please fill all fields");
-      return;
+      return false;
     }
 
     try {
-      await axios.post(`${API_URL}/signup`, { name, email, password });
-      showToast("Signup successful");
-      navigate("/login");
+      if (otp) {
+        await axios.post(`${API_URL}/signup/verify`, { email, otp });
+        showToast("Signup successful");
+        navigate("/login");
+      } else {
+        await axios.post(`${API_URL}/signup/send-otp`, { name, email, password });
+        showToast("OTP sent to your email");
+      }
+
+      return true;
     } catch (error) {
       showToast(error.response?.data?.message || "Signup failed");
+      return false;
     }
   }
 
@@ -150,6 +179,7 @@ function App() {
       setAccountReady(false);
       setUser(res.data.user);
       setToken(res.data.token);
+      saveSession(res.data.user, res.data.token);
       setOrders(nextOrders);
       setAccountReady(true);
       showToast("Login successful");
@@ -163,8 +193,27 @@ function App() {
     await logoutAccount(token);
     setToken(null);
     setUser(null);
+    saveSession(null, null);
     showToast("Logged out");
     navigate("/");
+  }
+
+  async function removeAccount() {
+    if (!token || !window.confirm("Delete your account permanently? This cannot be undone.")) return;
+
+    try {
+      await deleteAccount(token);
+      setToken(null);
+      setUser(null);
+      saveSession(null, null);
+      setCart([]);
+      setWishlist([]);
+      setOrders([]);
+      showToast("Account deleted");
+      navigate("/");
+    } catch {
+      showToast("Could not delete account");
+    }
   }
 
   async function placeOrder(paymentMode) {
@@ -254,6 +303,7 @@ function App() {
               wishlist={wishlist}
               orders={orders}
               onLogout={logout}
+              onDeleteAccount={removeAccount}
             />
           )}
         />

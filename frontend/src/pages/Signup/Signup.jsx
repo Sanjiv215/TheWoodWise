@@ -6,6 +6,9 @@ function Signup({ onSignup }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
@@ -17,11 +20,34 @@ function Signup({ onSignup }) {
       return;
     }
 
+    if (otpSent && otp.trim().length !== 6) {
+      setError("Please enter the 6 digit OTP sent to your email.");
+      return;
+    }
+
+    setSubmitting(true);
     setError("");
-    await onSignup(name, email, password);
+
+    const success = await onSignup({
+      name,
+      email,
+      password,
+      otp: otpSent ? otp : "",
+    });
+
+    setSubmitting(false);
+
+    if (!success) return;
+
+    if (!otpSent) {
+      setOtpSent(true);
+      return;
+    }
+
     setName("");
     setEmail("");
     setPassword("");
+    setOtp("");
   }
 
   return (
@@ -37,13 +63,36 @@ function Signup({ onSignup }) {
           <p className="blue-text">Join Us</p>
           <h1>Signup</h1>
           {error && <p className="auth-error">{error}</p>}
-          <input placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} />
-          <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          {otpSent && <p className="auth-success">OTP sent. Check your email to verify your account.</p>}
+          <input placeholder="Full Name" value={name} disabled={otpSent} onChange={(e) => setName(e.target.value)} />
+          <input type="email" placeholder="Email" value={email} disabled={otpSent} onChange={(e) => setEmail(e.target.value)} />
           <div className="password-row">
-            <input type={showPassword ? "text" : "password"} placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <input type={showPassword ? "text" : "password"} placeholder="Password" value={password} disabled={otpSent} onChange={(e) => setPassword(e.target.value)} />
             <button type="button" onClick={() => setShowPassword(!showPassword)}>{showPassword ? "Hide" : "Show"}</button>
           </div>
-          <button>Create Account</button>
+          {otpSent && (
+            <input
+              inputMode="numeric"
+              maxLength="6"
+              placeholder="Enter OTP"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+            />
+          )}
+          <button disabled={submitting}>{submitting ? "Please wait..." : otpSent ? "Verify OTP" : "Send OTP"}</button>
+          {otpSent && (
+            <button
+              className="link-button"
+              type="button"
+              disabled={submitting}
+              onClick={() => {
+                setOtp("");
+                setOtpSent(false);
+              }}
+            >
+              Change email
+            </button>
+          )}
           <p>Already have account? <Link to="/login">Login</Link></p>
         </form>
       </section>

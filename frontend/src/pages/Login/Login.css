@@ -18,7 +18,7 @@
 .auth-art {
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(239, 246, 255, 0.7)),
-    url("https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1100&q=80");
+    url("/images/home.png");
   background-size: cover;
   background-position: center;
 }

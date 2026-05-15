@@ -35,3 +35,13 @@ export async function logoutAccount(token) {
     headers: authHeaders(token),
   });
 }
+
+export async function deleteAccount(token) {
+  const response = await fetch(`${API_URL}/me`, {
+    method: "DELETE",
+    headers: authHeaders(token),
+  });
+
+  if (!response.ok) throw new Error("Could not delete account");
+  return response.json();
+}

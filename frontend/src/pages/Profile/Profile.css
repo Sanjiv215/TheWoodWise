@@ -32,11 +32,29 @@
   font-weight: 800;
 }
 
+.profile-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
 .profile-logout {
   background: #ffffff;
   color: #0f172a;
   border: 1px solid #cbd5e1;
   box-shadow: none;
+}
+
+.profile-delete {
+  background: #dc2626;
+  color: #ffffff;
+  border: 1px solid #b91c1c;
+  box-shadow: none;
+}
+
+.profile-delete:hover {
+  background: #b91c1c;
 }
 
 .profile-metrics {
@@ -146,6 +164,15 @@
   display: flex;
   justify-content: space-between;
   gap: 18px;
+}
+
+.danger-panel {
+  border-color: rgba(220, 38, 38, 0.28);
+}
+
+.danger-panel p {
+  color: var(--text-secondary);
+  line-height: 1.6;
 }
 
 @media (max-width: 1000px) {

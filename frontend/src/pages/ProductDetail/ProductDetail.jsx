@@ -51,11 +51,7 @@ function ProductDetail({ cartIds, wishlistIds, onAddCart, onToggleCart, onToggle
     return <main className="page"><div className="empty-box">Product not found.</div></main>;
   }
 
-  const galleryImages = [
-    product.image,
-    "https://images.unsplash.com/photo-1600210492493-0946911123ea?auto=format&fit=crop&w=900&q=80",
-    "https://images.unsplash.com/photo-1600607687644-c7171b42498f?auto=format&fit=crop&w=900&q=80"
-  ];
+  const galleryImages = product.images?.length ? product.images : [product.image];
   // const similarProducts = getSimilarProducts(product, 4);
 
   return (
