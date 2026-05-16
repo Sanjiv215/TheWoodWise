@@ -27,6 +27,18 @@ export async function saveAccountData(token, data) {
   return response.json();
 }
 
+export async function updateAccountName(token, name) {
+  const response = await fetch(`${API_URL}/me`, {
+    method: "PUT",
+    headers: authHeaders(token),
+    body: JSON.stringify({ name }),
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.message || "Could not update name");
+  return data;
+}
+
 export async function logoutAccount(token) {
   if (!token) return;
 

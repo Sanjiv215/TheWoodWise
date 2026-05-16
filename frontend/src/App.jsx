@@ -14,7 +14,7 @@ import Profile from "./pages/Profile/Profile.jsx";
 import Login from "./pages/Login/Login.jsx";
 import Signup from "./pages/Signup/Signup.jsx";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword.jsx";
-import { deleteAccount, getAccountData, logoutAccount, saveAccountData } from "./services/accountService";
+import { deleteAccount, getAccountData, logoutAccount, saveAccountData, updateAccountName } from "./services/accountService";
 import { getCartCount, normalizeCart } from "./utils/cart";
 import "./App.css";
 
@@ -216,6 +216,26 @@ function App() {
     }
   }
 
+  async function updateName(name) {
+    if (!token) {
+      showToast("Please login again");
+      return false;
+    }
+
+    try {
+      const data = await updateAccountName(token, name);
+      const updatedUser = data.user;
+
+      setUser(updatedUser);
+      saveSession(updatedUser, token);
+      showToast("Name updated");
+      return true;
+    } catch (error) {
+      showToast(error.message || "Could not update name");
+      return false;
+    }
+  }
+
   async function placeOrder(paymentMode) {
     if (!user || !token) {
       showToast("Please login before placing an order");
@@ -304,6 +324,7 @@ function App() {
               orders={orders}
               onLogout={logout}
               onDeleteAccount={removeAccount}
+              onUpdateName={updateName}
             />
           )}
         />

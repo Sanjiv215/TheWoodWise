@@ -3,7 +3,6 @@ import { useState } from "react";
 import "./Navbar.css";
 
 function Icon({ name }) {
-  if (name === "logo") return <svg viewBox="0 0 24 24"><path d="M4 19V8l8-4 8 4v11" /><path d="M8 19v-8h8v8" /><path d="M10 14h4" /></svg>;
   if (name === "products") return <svg viewBox="0 0 24 24"><path d="M4 7h16" /><path d="M7 7v13" /><path d="M17 7v13" /><path d="M4 20h16" /><path d="M9 11h6" /></svg>;
   if (name === "heart") return <svg viewBox="0 0 24 24"><path d="M20.8 5.6a5.4 5.4 0 0 0-7.6 0L12 6.8l-1.2-1.2a5.4 5.4 0 0 0-7.6 7.6L12 22l8.8-8.8a5.4 5.4 0 0 0 0-7.6Z" /></svg>;
   if (name === "cart") return <svg viewBox="0 0 24 24"><path d="M6 6h15l-2 9H8L6 6Z" /><path d="M6 6 5 3H2" /><circle cx="9" cy="20" r="1" /><circle cx="18" cy="20" r="1" /></svg>;
@@ -18,7 +17,9 @@ function Navbar({ cartCount, wishCount, user, onLogout }) {
   return (
     <nav className="navbar">
       <Link to="/" className="logo" onClick={() => setMenuOpen(false)}>
-        <span className="logo-mark"><Icon name="logo" /></span>
+        <span className="logo-mark">
+          <img src="/images/tww.png" alt="WoodWise" />
+        </span>
         <span>WoodWise</span>
       </Link>
 

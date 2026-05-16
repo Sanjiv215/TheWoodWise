@@ -36,8 +36,9 @@
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: linear-gradient(135deg, #2563eb, #60a5fa);
+  background: #ffffff;
   box-shadow: 0 0 26px rgba(96, 165, 250, 0.45);
+  overflow: hidden;
 }
 
 .navbar svg {
@@ -50,10 +51,10 @@
   stroke-linejoin: round;
 }
 
-.logo-mark svg {
-  width: 21px;
-  height: 21px;
-  color: #ffffff;
+.logo-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .nav-links {

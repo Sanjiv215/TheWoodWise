@@ -133,6 +133,18 @@
   font-weight: 800;
 }
 
+.profile-edit-btn,
+.profile-cancel-btn {
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+  box-shadow: none;
+}
+
+.profile-edit-btn {
+  padding: 10px 14px;
+}
+
 .order-preview,
 .empty-inline,
 .activity-list span,
@@ -164,6 +176,44 @@
   display: flex;
   justify-content: space-between;
   gap: 18px;
+}
+
+.profile-name-form {
+  display: grid;
+  gap: 10px;
+}
+
+.profile-name-form label {
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.profile-name-form input {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  color: var(--text-primary);
+  font: inherit;
+}
+
+.profile-name-form input:focus {
+  border-color: var(--accent-color);
+  outline: 3px solid rgba(37, 99, 235, 0.14);
+}
+
+.profile-form-error {
+  margin: 0;
+  color: #b91c1c;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.profile-form-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .danger-panel {

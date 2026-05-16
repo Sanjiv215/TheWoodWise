@@ -1,8 +1,18 @@
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { getCartCount, getCartTotal } from "../../utils/cart";
 import "./Profile.css";
 
-function Profile({ user, cart, wishlist, orders, onLogout, onDeleteAccount }) {
+function Profile({ user, cart, wishlist, orders, onLogout, onDeleteAccount, onUpdateName }) {
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [name, setName] = useState(user?.name || "");
+  const [nameError, setNameError] = useState("");
+  const [savingName, setSavingName] = useState(false);
+
+  useEffect(() => {
+    setName(user?.name || "");
+  }, [user?.name]);
+
   if (!user) {
     return (
       <main className="page">
@@ -13,6 +23,34 @@ function Profile({ user, cart, wishlist, orders, onLogout, onDeleteAccount }) {
         </div>
       </main>
     );
+  }
+
+  async function handleNameSubmit(e) {
+    e.preventDefault();
+
+    const nextName = name.trim();
+    if (!nextName) {
+      setNameError("Name is required.");
+      return;
+    }
+
+    if (nextName.length > 60) {
+      setNameError("Name must be 60 characters or less.");
+      return;
+    }
+
+    setNameError("");
+    setSavingName(true);
+    const updated = await onUpdateName(nextName);
+    setSavingName(false);
+
+    if (updated) setIsEditingName(false);
+  }
+
+  function cancelNameEdit() {
+    setName(user.name);
+    setNameError("");
+    setIsEditingName(false);
   }
 
   const latestOrder = orders[0];
@@ -97,11 +135,38 @@ function Profile({ user, cart, wishlist, orders, onLogout, onDeleteAccount }) {
               <p className="blue-text">Info</p>
               <h2>Personal Info</h2>
             </div>
+            {!isEditingName && (
+              <button className="profile-edit-btn" type="button" onClick={() => setIsEditingName(true)}>
+                Edit name
+              </button>
+            )}
           </div>
-          <div className="info-list">
-            <span>Name <strong>{user.name}</strong></span>
-            <span>Email <strong>{user.email}</strong></span>
-          </div>
+          {isEditingName ? (
+            <form className="profile-name-form" onSubmit={handleNameSubmit}>
+              <label htmlFor="profile-name">Name</label>
+              <input
+                id="profile-name"
+                value={name}
+                maxLength="60"
+                onChange={(e) => setName(e.target.value)}
+                disabled={savingName}
+              />
+              {nameError && <p className="profile-form-error">{nameError}</p>}
+              <div className="profile-form-actions">
+                <button type="submit" disabled={savingName}>
+                  {savingName ? "Saving..." : "Save name"}
+                </button>
+                <button className="profile-cancel-btn" type="button" onClick={cancelNameEdit} disabled={savingName}>
+                  Cancel
+                </button>
+              </div>
+            </form>
+          ) : (
+            <div className="info-list">
+              <span>Name <strong>{user.name}</strong></span>
+              <span>Email <strong>{user.email}</strong></span>
+            </div>
+          )}
         </div>
 
         <div className="profile-panel danger-panel">

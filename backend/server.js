@@ -445,6 +445,43 @@ app.put("/me/data", requireUser, api(async (request, response) => {
     response.json(await accountData(request.userId));
 }));
 
+app.put("/me", requireUser, api(async (request, response) => {
+    const name = String(request.body.name || "").trim();
+
+    if (!name) {
+        return response.status(400).json({ message: "Name is required" });
+    }
+
+    if (name.length > 60) {
+        return response.status(400).json({ message: "Name must be 60 characters or less" });
+    }
+
+    const userObjectId = ObjectId.isValid(request.userId) ? new ObjectId(request.userId) : null;
+
+    if (!userObjectId) {
+        return response.status(404).json({ message: "Account not found" });
+    }
+
+    const result = await col("users").findOneAndUpdate(
+        { _id: userObjectId },
+        { $set: { name, updatedAt: new Date() } },
+        { returnDocument: "after" }
+    );
+    const updatedUser = result?.value || result;
+
+    if (!updatedUser) {
+        return response.status(404).json({ message: "Account not found" });
+    }
+
+    response.json({
+        user: {
+            id: updatedUser._id.toString(),
+            name: updatedUser.name,
+            email: updatedUser.email,
+        },
+    });
+}));
+
 app.delete("/me", requireUser, api(async (request, response) => {
     const userObjectId = ObjectId.isValid(request.userId) ? new ObjectId(request.userId) : null;
     const user = userObjectId ? await col("users").findOne({ _id: userObjectId }) : null;
