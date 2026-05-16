@@ -72,8 +72,89 @@
   box-shadow: 0 18px 45px rgba(59, 130, 246, 0.16);
 }
 
+.qr-payment-panel {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 18px;
+  align-items: center;
+  padding: 18px;
+  margin: 14px 0;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.qr-box {
+  width: 180px;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 1px solid #dbeafe;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.qr-box img {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  object-fit: contain;
+}
+
+.qr-box span,
+.qr-details span,
+.qr-details small {
+  color: var(--text-secondary);
+}
+
+.qr-details {
+  display: grid;
+  gap: 6px;
+}
+
+.qr-details p,
+.qr-details strong {
+  margin: 0;
+}
+
+.qr-details strong {
+  color: #0f172a;
+  font-size: 28px;
+}
+
+.upi-reference-input {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.cod-payment-panel {
+  display: grid;
+  gap: 6px;
+  padding: 18px;
+  margin: 14px 0;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  background: #f0fdf4;
+}
+
+.cod-payment-panel strong {
+  color: #14532d;
+}
+
+.cod-payment-panel span {
+  color: var(--text-secondary);
+}
+
 @media (max-width: 700px) {
   .payment-grid {
     grid-template-columns: 1fr;
+  }
+
+  .qr-payment-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .qr-box {
+    width: min(100%, 260px);
   }
 }

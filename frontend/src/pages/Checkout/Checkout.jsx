@@ -1,21 +1,42 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { getCartTotal } from "../../utils/cart";
 import "./Checkout.css";
+
+const MERCHANT_UPI_ID = import.meta.env.VITE_MERCHANT_UPI_ID || "sanjivprasad360-1@okicici";
+const MERCHANT_NAME = import.meta.env.VITE_MERCHANT_NAME || "TheWoodWise";
 
 function Checkout({ cart, onPlaceOrder }) {
   const total = getCartTotal(cart);
 
   const [payment, setPayment] = useState("UPI");
+  const [paid, setPaid] = useState(false);
+  const [transactionId, setTransactionId] = useState("");
 
   // form states
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const orderNote = useMemo(() => {
+    const itemCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+    const customer = fullName.trim() || "Customer";
+    return `WoodWise order for ${customer} (${itemCount} item${itemCount === 1 ? "" : "s"})`;
+  }, [cart, fullName]);
+  const upiLink = useMemo(() => {
+    const params = new URLSearchParams({
+      pa: MERCHANT_UPI_ID,
+      pn: MERCHANT_NAME,
+      am: total.toFixed(2),
+      cu: "INR",
+      tn: orderNote,
+    });
+
+    return `upi://pay?${params.toString()}`;
+  }, [orderNote, total]);
+  const qrUrl = `https://quickchart.io/qr?text=${encodeURIComponent(upiLink)}`;
 
   const paymentMethods = [
     { name: "UPI", icon: "UPI" },
-    { name: "Debit/Credit Card", icon: "CARD" },
-    { name: "Net Banking", icon: "BANK" }
+    { name: "Cash on Delivery", icon: "COD" }
   ];
 
   const handleOrder = () => {
@@ -24,7 +45,12 @@ function Checkout({ cart, onPlaceOrder }) {
       return;
     }
 
-    onPlaceOrder(payment);
+    if (payment === "UPI" && !transactionId.trim()) {
+      alert("Please enter transaction ID");
+      return;
+    }
+
+    onPlaceOrder(payment === "UPI" ? `UPI paid - Ref ${transactionId.trim()}` : payment);
   };
 
   return (
@@ -68,7 +94,11 @@ function Checkout({ cart, onPlaceOrder }) {
                   : "payment-card"
               }
               key={item.name}
-              onClick={() => setPayment(item.name)}
+              onClick={() => {
+                setPayment(item.name);
+                setPaid(false);
+                setTransactionId("");
+              }}
             >
               <span className="payment-radio">
                 {payment === item.name ? "●" : ""}
@@ -81,19 +111,46 @@ function Checkout({ cart, onPlaceOrder }) {
           ))}
         </div>
 
-        {payment === "UPI" && <input placeholder="UPI ID (Demo)" />}
-
-        {payment === "Debit/Credit Card" && (
-          <input placeholder="Card Number (Demo)" />
+        {payment === "UPI" && (
+          <div className="qr-payment-panel">
+            <div className="qr-box">
+              <img src={qrUrl} alt="UPI QR" />
+            </div>
+            <div className="qr-details">
+              <p>Scan to pay</p>
+              <strong>₹{total.toLocaleString("en-IN")}</strong>
+              <span>{MERCHANT_UPI_ID}</span>
+              <small>{orderNote}</small>
+            </div>
+            <button className="paid-button" type="button" onClick={() => setPaid(true)}>
+              I Have Paid
+            </button>
+            {paid && (
+              <>
+                <input
+                  className="upi-reference-input"
+                  placeholder="Enter Transaction ID"
+                  value={transactionId}
+                  onChange={(e) => setTransactionId(e.target.value)}
+                />
+                <button type="button" onClick={handleOrder}>
+                  Confirm Order
+                </button>
+              </>
+            )}
+          </div>
         )}
 
-        {payment === "Net Banking" && (
-          <input placeholder="Bank Name (Demo)" />
+        {payment === "Cash on Delivery" && (
+          <div className="cod-payment-panel">
+            <strong>Pay when your order arrives</strong>
+            <span>No online payment needed for this order.</span>
+          </div>
         )}
 
         <h3>Total: ₹{total.toLocaleString("en-IN")}</h3>
 
-        <button onClick={handleOrder}>Place Order</button>
+        {payment === "Cash on Delivery" && <button onClick={handleOrder}>Place COD Order</button>}
       </div>
     </main>
   );
