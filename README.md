@@ -1,52 +1,56 @@
-# The WoodWise
+# 🛋️ The WoodWise: Furniture E-Commerce Platform
 
-The WoodWise is a full-stack furniture e-commerce web application built with React, Node.js, Express, and MongoDB. It lets users browse furniture products, manage wishlist and cart items, place demo orders, update profile details, reset passwords with OTP, and delete their account.
+[![React](https://img.shields.io/badge/React-18-20232A?style=flat&logo=react&logoColor=61DAFB)](https://react.dev/)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=flat&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![Express](https://img.shields.io/badge/Express-4.x-000000?style=flat&logo=express&logoColor=white)](https://expressjs.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Native_Driver-4EA94B?style=flat&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-## Features
+The WoodWise is a modern full-stack furniture e-commerce web application built with **React**, **Node.js**, **Express**, and **MongoDB**. It delivers an end-to-end shopping experience featuring OTP-based email authentication, session-token security, search with multi-criteria filtering, wishlist management, cart checkout, and order history.
 
-- User signup with email OTP verification
-- Login and logout with session-token authentication
-- Forgot password and reset password using OTP
-- Product listing, search, filters, sorting, pagination, and product details
-- Similar product suggestions
-- Wishlist management
-- Cart management with quantity updates
-- Checkout and order history
-- Profile section with name update
-- Account deletion
-- Responsive React UI
+---
 
-## Tech Stack
+## ✨ Features
 
-**Frontend**
+- 🔐 **Authentication & Security**:
+  - Email signup and login with hashed OTP verification.
+  - Database-backed session token management with MongoDB TTL automatic expiration.
+  - Password reset with secure OTP verification and `bcrypt` hashing.
+- 🛍️ **E-Commerce Core**:
+  - Interactive catalog with real-time text search, category filters, price sorting, and pagination.
+  - Detailed product views with dynamic similar product recommendations.
+  - Full-featured shopping cart (quantity adjustments, price calculation) and wishlist.
+  - Order creation and order history tracking.
+- 👤 **Account Management**:
+  - User profile updates and account deletion.
 
-- React
-- Vite
-- React Router
-- Axios
-- CSS
+---
 
-**Backend**
+## 🛠️ Tech Stack
 
-- Node.js
-- Express.js
-- MongoDB native driver
-- bcrypt
-- nodemailer
-- dotenv
-- Node.js crypto module
+### Frontend
+- **Framework**: React (Vite)
+- **Routing**: React Router
+- **Networking**: Axios
+- **Styling**: Modular CSS
 
-**Database**
+### Backend & Database
+- **Runtime**: Node.js & Express.js
+- **Database**: MongoDB (Native Driver with TTL Indexes)
+- **Security**: `bcrypt`, Node `crypto` module
+- **Mailing**: `nodemailer`
+- **Environment**: `dotenv`
 
-- MongoDB
+---
 
-## Project Structure
+## 📂 Project Structure
 
-```txt
-TheWoodWise copy/
+```text
+TheWoodWise/
 ├── backend/
 │   ├── data/
 │   │   └── products.json
+│   ├── .env.example
 │   ├── package.json
 │   └── server.js
 ├── frontend/
@@ -59,107 +63,55 @@ TheWoodWise copy/
 │   │   ├── styles/
 │   │   ├── utils/
 │   │   └── App.jsx
+│   ├── .env.example
 │   ├── index.html
 │   └── package.json
+├── LICENSE
 └── README.md
 ```
 
-## Setup
+---
 
-Install backend dependencies:
+## 🚀 Quickstart Guide
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/Sanjiv215/TheWoodWise.git
+cd TheWoodWise
+```
+
+### 2. Backend Configuration & Setup
 
 ```bash
 cd backend
 npm install
-```
-
-Install frontend dependencies:
-
-```bash
-cd frontend
-npm install
-```
-
-## Environment Variables
-
-Create your own local `.env` files when running the project. These files are ignored by Git and should not be uploaded to GitHub.
-
-Backend variables used by the project:
-
-```txt
-MONGO_URI=your_mongodb_connection_string
-DB_NAME=thewoodwise
-PORT=5000
-SMTP_USER=your_email_address
-SMTP_PASS=your_email_app_password
-SMTP_FROM=TheWoodWise <your_email_address>
-```
-
-Frontend variable:
-
-```txt
-VITE_API_URL=/api
-```
-
-In development, Vite proxies `/api` requests to the backend server.
-
-## Run The Project
-
-Start the backend:
-
-```bash
-cd backend
+cp .env.example .env
+# Edit .env with your MongoDB URI and SMTP credentials
 npm start
 ```
+*Backend runs at `http://localhost:5000`.*
 
-Start the frontend:
+### 3. Frontend Configuration & Setup
 
 ```bash
-cd frontend
+cd ../frontend
+npm install
+cp .env.example .env
 npm run dev
 ```
+*Frontend runs at `http://localhost:5173`.*
 
-Default local URLs:
+---
 
-```txt
-Frontend: http://localhost:5173
-Backend:  http://localhost:5000
-```
+## 🔒 Security Architecture
 
-## Build Frontend
+- **Session Tokens**: Created via `crypto.randomBytes(32)` stored in MongoDB `sessions` with TTL expiration indexes.
+- **Password Protection**: Passwords and OTPs are hashed with salt rounds using `bcrypt`.
+- **Protected Middleware**: Express `requireUser` guard validates session headers on restricted endpoints.
 
-```bash
-cd frontend
-npm run build
-```
+---
 
-## Authentication
+## 📄 License
 
-This project does not use JWT. It uses a database-backed session token system.
-
-When a user logs in, the backend creates a random token using Node.js `crypto.randomBytes`, stores it in the MongoDB `sessions` collection, and sends it to the frontend. The frontend stores the token locally and sends it in the `Authorization` header for protected API requests.
-
-Protected routes use the custom `requireUser` middleware in `backend/server.js`.
-
-## Middleware Used
-
-- `express.json()` parses JSON request bodies.
-- `express.static()` serves image files.
-- `api()` is a custom async error wrapper.
-- `requireUser` is a custom authentication middleware.
-- Final error-handling middleware returns a clean server error response.
-
-## CRUD Coverage
-
-- **Create:** signup, OTP records, orders, sessions
-- **Read:** products, product details, account data, orders
-- **Update:** profile name, cart quantity, account order data, password reset
-- **Delete:** logout session, account deletion
-
-## Important Notes
-
-- Passwords are hashed using `bcrypt`.
-- OTPs are hashed before storing in MongoDB.
-- Session tokens expire automatically through a MongoDB TTL index.
-- `.env` and `.env.example` files are ignored and should not be pushed to GitHub.
-
+Distributed under the [MIT License](LICENSE). Copyright (c) 2026 Sanjiv Prasad.
