@@ -1,10 +1,13 @@
 # 🛋️ The WoodWise: Furniture E-Commerce Platform
 
-[![React](https://img.shields.io/badge/React-18-20232A?style=flat&logo=react&logoColor=61DAFB)](https://react.dev/)
-[![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=flat&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
-[![Express](https://img.shields.io/badge/Express-4.x-000000?style=flat&logo=express&logoColor=white)](https://expressjs.com/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-Native_Driver-4EA94B?style=flat&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-the--wood--wise.vercel.app-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://the-wood-wise.vercel.app/)
+[![React](https://img.shields.io/badge/React-18-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![Express](https://img.shields.io/badge/Express-4.x-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Native_Driver-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+
+> 🌐 **Live Application:** [https://the-wood-wise.vercel.app/](https://the-wood-wise.vercel.app/)
 
 The WoodWise is a modern full-stack furniture e-commerce web application built with **React**, **Node.js**, **Express**, and **MongoDB**. It delivers an end-to-end shopping experience featuring OTP-based email authentication, session-token security, search with multi-criteria filtering, wishlist management, cart checkout, and order history.
 
